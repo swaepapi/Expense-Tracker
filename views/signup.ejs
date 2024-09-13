@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Signup</title>
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Mulish&display=swap"
+            rel="stylesheet"
+            type='text/css'
+        >
+        
+        <style>
+            
+:root {
+    --primary: #605DFF;
+            --primary-dark: #4a00e0;
+            --primary-light: #5DA8FF;
+            --secondary: #1D1D1D;
+            
+            --text: #1F2346;
+            --white: #FFFFFF;
+            --violet: #8e2de2;
+    --text-lighter: #222223;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Mulish, sans-serif;
+}
+
+h1 {
+    color: var(--text);
+}
+
+.background {
+    content: "";
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    place-items: center;
+    background-color: var(--primary);
+}
+
+.socials-row {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0px ;
+}
+
+.socials-row img {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.socials-row > a {
+    background-color: transparent;
+    border-radius: 0.5rem;
+    width: 100%;
+    min-height: 3rem;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: var(--text);
+    border: 1px solid var(--text-lighter);
+    font-weight: 700;
+}
+
+.socials-row > a:hover {
+    background-color: rgb(0, 0, 0);
+    border: 1px solid var(--primary);
+    color: white;
+}
+
+.divider {
+    display: flex;
+    flex-direction: row;
+    color: var(--text-lighter);
+    gap: 1rem;
+    align-items: center;
+}
+
+.divider-line {
+    width: 100%;
+    height: 1px;
+    background-color: var(--text-lighter);
+    opacity: .2;
+}
+
+.centering {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+.my-form {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    gap: 1rem;
+    background-color: #E9E9E9;
+    border-radius: 1rem;
+    box-shadow: 0 20px 60px black;
+    min-width: 17.5rem;
+    max-width: 31.25rem;
+    width: 100%;
+    padding: 2rem;
+    border: 1px solid rgb(83, 82, 82);
+}
+
+.signup-welcome {
+    height: 5rem;
+    width: 5rem;
+    object-fit: cover;
+}
+
+.signup-welcome-row {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.my-form__button {
+    background-color: var(--primary);
+    color: white;
+    white-space: nowrap;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    line-height: 3.125rem;
+    outline: none;
+    font-size: 1.125rem;
+    letter-spacing: .025em;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 800;
+    min-height: 3.125rem;
+    width: 100%;
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 10px rgba(0,0,0,.15);
+    transition: all .3s ease;
+    -webkit-transition: all .3s ease;
+}
+
+.text-field input {
+    color: var(--text-lighter);
+    font-size: 1rem;
+    font-weight: 500;
+    max-width: 100%;
+    width: 100%;
+    border: 1px solid var(--text-lighter);
+    height: 3.125rem;
+    color: var(--text);
+    letter-spacing: .03rem;
+    background-color: transparent;
+    outline: none;
+    transition: .25s;
+    border-radius: 0.5rem;
+    text-indent: 1.25rem;
+    margin-top: 0.5rem;
+}
+
+.text-field input:focus {
+    border: 1px solid var(--primary);
+}
+
+.my-form__button:hover {
+    background-color: black;
+}
+
+.text-field {
+    position: relative;
+}
+
+.text-field input::-webkit-input-placeholder {
+    color: var(--text-lighter);
+}
+
+.text-field svg {
+    position: absolute;
+    right: -0.125rem;
+    bottom: -0.25rem;
+    width: 1.875rem;
+    height: 1.875rem;
+    transform: translate(-50%,-50%);
+    transform-origin: center;
+    stroke: var(--text);
+}
+
+.text-field input:focus + svg {
+    stroke: var(--primary);
+}
+
+.text-field label {
+    color: var(--text);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: .03rem;
+    z-index: 10;
+}
+
+.text-field label:has(+ input:focus) {
+    color: var(--primary);
+}
+
+.input-icon {
+    position: absolute;
+    bottom: 0;
+    top: 55%;
+    right: 0.5rem;
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+}
+
+.my-form__actions {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.my-form__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.my-form__actions a {
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+.my-form__actions a:hover {
+    text-decoration: underline;          
+}
+
+.my-form__row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.my-form__signin {
+    display: flex;
+    justify-content: center;
+}
+
+.my-form__signin a {
+    color: var(--primary);
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 1.125rem;
+}
+
+.my-form__signin a:hover {
+    text-decoration: underline;
+}
+footer{
+    background-color: black;
+}
+        </style>
+    </head>
+    <body>
+        <div class="background"></div>
+        <div class="centering">
+            <form class="my-form" id="signupForm" action="/signup" method="POST">
+                <div class="signup-welcome-row">
+                   
+                    <h1>Sign Up!</h1>
+                </div>
+                <!-- <div class="socials-row">
+                    <a
+                        href="#"
+                        title="Use Google"
+                    >
+                        <img src="assets/google.png" alt="Google">
+                        Use Google
+                    </a>
+                    
+                </div>
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    OR
+                    <div class="divider-line"></div>
+                </div> -->
+                <div class="my-form__content">
+                    <div class="text-field">
+                        <label for="signupEmail">Email:</label>
+                        <input
+                            aria-label="Email"
+                            type="email"
+                            id="signupEmail"
+                            name="email"
+                            placeholder="Your Email"
+                            autocomplete="off"
+                            required
+                        >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-mail"
+                            width="44" height="44"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="#A7A2CB"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" />
+                            <path d="M3 7l9 6l9 -6" />
+                        </svg>
+                    </div>
+
+                    <div class="text-field">
+                        <label for="username">Username:</label>
+                        <input
+                            aria-label="username"
+                            type="text"
+                            id="username"
+                            name="name"
+                            placeholder="Your Username"
+                            autocomplete="off"
+                            required
+                        >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="icon icon-tabler icon-tabler-mail"
+                            width="44" height="44"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="#A7A2CB"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" />
+                            <path d="M3 7l9 6l9 -6" />
+                        </svg>
+                    </div>
+                    <div class="text-field">
+                        <label for="password">Password:
+                            <input id="signupPassword" type="password" name="password" placeholder="Your Password" title="Minimum 6 characters at 
+                                                            least 1 Alphabet and 1 Number"
+                                pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$" required>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z">
+                                </path>
+                                <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"></path>
+                                <path d="M8 11v-4a4 4 0 1 1 8 0v4"></path>
+                            </svg>
+                        </label>
+                    </div>
+                    
+                    <input type="submit" class="my-form__button" value="Sign-Up">
+                </div>
+                <div class="my-form__actions">
+                    <div>
+                        By registering you agree to our
+                        <a href="#" title="Reset Password">Terms</a>
+                        and <a href="#" title="Reset Password">Privacy</a>
+                    </div>
+                    <div class="my-form__signin">
+                        <p>Already have an account? <a href="/login" title="Sign In">Log-in</a></p>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <footer > </footer>
+        <script src="script.js">
+
+
+        </script>
+    </body>
+</html>
