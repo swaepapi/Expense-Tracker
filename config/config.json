@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": "SQL@swaepapi24",
-    "database": "database_development",
+    "database": "expense_db",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },

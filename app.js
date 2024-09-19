@@ -1,59 +1,116 @@
-const { Sequelize } = require('sequelize');
 const express = require('express');
-const app = express();
+const bcrypt = require('bcrypt');
+const router = express.Router();
+const db = require('../config/database'); // Your database connection
+const session = require('express-session');
 
+// Set up express-session middleware in your app.js file like this:
+// app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: true }));
 
-app.set('view engine', 'ejs');
-app.use(express.urlencoded({extended: true}));
-app.use(express.json());
-app.use(express.static('public'));
+// Middleware to check if the user is authenticated
+const isAuthenticated = (req, res, next) => {
+    if (req.session.user) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+};
 
-
-const sequelize = new Sequelize('database_development', 'root', 'SQL@swaepapi24', {
-    host : 'localhost',
-    dialect:'mysql'
-
+// Route to render the signup page
+router.get('/signup', (req, res) => {
+    res.render('signup'); // Assumes you're using a template engine like EJS
 });
 
+// Route to render the login page
+router.get('/login', (req, res) => {
+    const successMessage = req.query.signupSuccess === 'true' ? 'Sign-up successful! Please log in.' : null;
+    res.render('login', { successMessage }); // Pass successMessage to the login page
+});
 
-async function connect(){
+// Sign-up route (handles user registration)
+router.post('/signup', async (req, res) => {
+    const { email, name, password } = req.body;
+
+    // Simple validation (you can extend this)
+    if (!email || !name || !password) {
+        return res.status(400).send('All fields are required.');
+    }
+
     try {
-    await sequelize.authenticate();
-    console.log('Connection established Successfully.');
-        } catch (error){
-    console.log('Unable to connect to the database.', error);
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Insert user into the database
+        const query = 'INSERT INTO users (email, name, password) VALUES (?, ?, ?)';
+        db.query(query, [email, name, hashedPassword], (err, result) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Error saving user to the database.');
+            }
+
+            // Redirect to the login page with a success message
+            res.redirect('/login?signupSuccess=true');
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error during sign-up.');
+    }
+});
+
+// Login route (handles user authentication)
+router.post('/login', (req, res) => {
+    const { email, password } = req.body;
+
+    // Query the database for the user by email
+    const query = 'SELECT * FROM users WHERE email = ?';
+    db.query(query, [email], async (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error querying the database.');
         }
-}
 
-connect();
+        // Check if the user exists
+        if (results.length === 0) {
+            return res.status(400).send('User not found.');
+        }
 
-// app.get ('/', (req, res) =>{
-//     res.send('Hello Fidel, you are Making Progress. Keep it up') ;
+        const user = results[0];
 
-// });
+        try {
+            // Compare the submitted password with the stored hashed password
+            const isMatch = await bcrypt.compare(password, user.password);
 
-app.get ('/signup', (req, res) =>{
-    res.render('signup',{ title: 'Sign up' } );
+            if (!isMatch) {
+                return res.status(400).send('Invalid credentials.');
+            }
 
+            // Store user info in session upon successful login
+            req.session.user = { id: user.id, name: user.name, email: user.email };
+
+            // Redirect to the dashboard after login
+            res.redirect('/dashboard');
+        } catch (error) {
+            console.error(error);
+            return res.status(500).send('Error during login.');
+        }
+    });
 });
-app.get ('/login', (req, res) =>{
-    res.render('login',{ title: 'Log in' } );
 
-});
-app.get ('/dashboard', (req, res) =>{
-    res.render('dashboard',{ title: 'Dashboard' } );
-
+// Dashboard route (only accessible to authenticated users)
+router.get('/dashboard', isAuthenticated, (req, res) => {
+    res.render('dashboard', { user: req.session.user });
 });
 
-app.post('/signup', async (req, res) =>{
-    const { name, email, password} = req.body;
-    const user = User.await.create({ name:name, email: email, password: password});
-    res.send(user);
+// Logout route to destroy the session
+router.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error logging out.');
+        }
+
+        res.redirect('/login');
+    });
 });
 
-
-app.listen(8000, () =>{
-console.log('App is running on port 8000');
-}
-
-);
+module.exports = router;
