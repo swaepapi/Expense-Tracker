@@ -1,22 +1,23 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
-  class expenses extends Model {
+  class Expenses extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // define association here, if needed
     }
   }
-  expenses.init({
-    intialamount: {
+
+  // Initialize the Expenses model with the sequelize instance and DataTypes
+  Expenses.init({
+    date: {
       allowNull: false,
-      type: DataTypes.FLOAT,
+      type: DataTypes.DATEONLY, 
     },
     description: {
       allowNull: false,
@@ -27,8 +28,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
     },
   }, {
-    sequelize,
-    modelName: 'expenses',
+    sequelize, // Make sure the sequelize instance is passed here
+    modelName: 'Expenses',
+    timestamps: true, // Enable timestamps to automatically handle createdAt and updatedAt
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    defaultScope: {
+      attributes: { exclude: ['createdAt', 'updatedAt'] }, // Exclude these fields in queries if needed
+    }
   });
-  return expenses;
+
+  return Expenses; // Return the Expenses model
 };

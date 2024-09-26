@@ -3,11 +3,12 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
+
+
 
 let sequelize;
 if (config.use_env_variable) {
@@ -16,6 +17,7 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
+// Read all models in the models directory, except for this index.js file
 fs
   .readdirSync(__dirname)
   .filter(file => {
@@ -27,16 +29,23 @@ fs
     );
   })
   .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
+    const model = require(path.join(__dirname, file)); // Load the model file
+    if (typeof model.init === 'function') {
+      model.init(sequelize, Sequelize.DataTypes); // Initialize the model with sequelize
+    }
+    db[model.name] = model; // Add the model to the db object
   });
 
+// Call the associate function on each model if it exists
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
 
+db.Expenses = require('./expenses')(sequelize, Sequelize.DataTypes);
+
+// Add sequelize and Sequelize to the db object for export
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

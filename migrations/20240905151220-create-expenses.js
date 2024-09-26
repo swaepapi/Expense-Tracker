@@ -18,13 +18,19 @@ module.exports = {
       amount: {
         type: Sequelize.FLOAT
       },
+      date: {  
+        allowNull: false,
+        type: Sequelize.DATEONLY 
+      },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') 
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') 
       }
     });
   },

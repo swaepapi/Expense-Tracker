@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
+      username: {
         type: Sequelize.STRING
       },
       email: {
@@ -18,13 +18,16 @@ module.exports = {
       password: {
         type: Sequelize.STRING
       },
+
       createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+      allowNull: false,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') // Set default to current timestamp
       },
       updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+      allowNull: false,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') // Set default to current timestamp
       }
     });
   },

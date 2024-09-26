@@ -1,34 +1,569 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <% include partials/header %>
-<h1>Welcome, <%= user.username %></h1>
-<p>Your income: <%= income %></p>
-<p>Your expenses: <%= expenses %></p>
-<% include partials/footer %>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="Styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Matemasie&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #605DFF;
+        --primary-dark: #4a00e0;
+        --primary-light: #5DA8FF;
+        --secondary: #1D1D1D;
+        --social-background: #E9E9E9;
+        --social-background-hover: #dddddd;
+        --text: #1F2346;
+        --white: #FFFFFF;
+        --violet: #8e2de2;
+    }
+    body{
+        font-size: 20px;
+        font-family: "Montserrat", sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+      
+        background-color: #c1e8ff;
+    }
+    .container{
+        display: flex;
+        min-height: 100vh;
+        padding: 0;
+        margin: 0;
+    }
+    
+    header{
+        display: flex;
+        justify-content: space-between;
+    }
+    .montserrat-alternates-black {
+        font-family: "Montserrat", sans-serif;
+      font-optical-sizing: auto;
+        font-weight: 900;
+        font-style: normal;
+        color: rgb(0, 0, 0);
+      }
+      
+    h1,h2,h3,h4,h5{
+        text-align: center;
+    }
+    h5{
+        font-weight: 900;
+        font-size: 30px;
+        font-family: "Montserrat Alternates", sans-serif;
+    
+      font-style: normal;
+    }
+    h1{
+        font-size: 40px;
+    }
+    h4{
+        font-family: "Montserrat", sans-serif;
+        font-size: 40px;
+          font-weight: 800;
+          font-style: normal;
+    }
+    
+    .black{
+        
+        top: 0;
+        margin: 0;
+    }
+    
+    /* -------------------------------------SIDE BAR --------------------------- */
+     
+    nav {
+        position: sticky;
+        top: 0;
+        left: 0;
+        height: auto;
+        background-color: #021024;
+        width: 16rem;
+        padding: 10px 13px 10px 0;
+        color: aliceblue;
+        display: flex;
+        flex-direction: column;
+        transition: width 0.5s ease-in-out;
+        /*box-sizing: border-box;*/
+        margin-right: 10px;
+        border-radius: 10px;
+    }
+    .fa-circle-chevron-left{
+      color: #021024;
+    }
+    
+    .welcome{
+        font-size: 20px;
+        text-align: center;
+        font-style: italic;
+    }
+    .logout {
+        font-size: 20px;
+        color: aliceblue;
+        text-align: center;
+    }
+    .logout > a {
+        text-decoration: none;
+        text-align: center;
+        font-size: 20px;
+        color: red;
+    }
+    .fa-solid {
+      padding-left: 10px;
+    }
+    .fa-power-off{
+      padding-left: 10px;
+      color: red;
+    }
+    
+    
+    .fa-dollar-sign{
+        font-size: 35px;
+        color: aliceblue;
+    }
+    .sidebar-top {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    
+    .sidebar-top .logo {
+      position: relative;
+      width: 3.37rem;
+      
+    }
+    
+    .sidebar-top h2 {
+      padding-left: 0.5rem;
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+    
+    .expand-btn {
+      position: absolute;
+      top: 50%;
+      width: 2.8125rem;
+      height: 2.8125rem;
+      display: grid;
+      place-items: center;
+      background-color: var(--button-color);
+      border-radius: 0.375rem;
+      cursor: pointer;
+      right: -3rem;
+      transform: translateY(-50%) translateX(-0.5rem);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s;
+      box-shadow: 0 3px 10px -3px var(--button-color-shadow);
+    }
+    
+    
+    nav:hover .expand-btn,
+    .expand-btn.hovered {
+      transform: translateY(-50%) translateX(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+    .sidebar-links{
+      padding-top: 5px;
+      margin: 0;
+    }
+    
+    .sidebar-links ul {
+      list-style-type: none;
+      position: relative;
+      
+      
+     
+    }
+    
+    .sidebar-links li {
+      position: relative;
+      padding-left: 3px;
+      margin-right: 5px;
+      width: 100%;
+      margin-bottom: 7px;
+      height: 80px;
+    }
+    .sidebar-links li:hover{
+        background-color: rgb(160, 160, 161);
+        border-radius: 10px;
+    }
+    
+    .sidebar-links li a {
+      padding: 0.75rem 0px;
+      color: var(--text-color);
+      font-size: 1.25rem;
+      display: flex;
+      
+      height: 3.5rem;
+      text-decoration: none;
+      
+    }
+    
+    .hid1{
+        font-style: italic;
+    }
+    .icon {
+      display: flex;
+      padding-right: 10px;
+      
+    }
+    .icon > span {
+        margin-bottom: -20px;
+    }
+    
+    .icon img {
+      width: 2rem;
+      height: 2rem;
+      
+    }
+    
+    .sidebar-links .link {
+      margin-left: 0px;
+    }
+    
+    .sidebar-links .active {
+      width: 100%;
+      text-decoration: none;
+      background-color: white;
+      transition: all 100ms ease-in;
+      border-radius: 0.625rem;
+    }
+    
+    body.collapsed nav {
+      width: 5rem;
+    }
+    
+    body.collapsed .hide {
+      opacity: 0;
+      pointer-events: none;
+      transition-delay: 0s;
+    }
+    
+    body.collapsed .expand-btn img {
+      transform: rotate(-180deg);
+    }
+    
+    /* -------------------------------------------MAIN--------------------------- */
+    
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      left: 20%;
+      
+    }
+    .card{
+       text-align: center;
+       border: 1px solid #5d5b5b;
+       margin: 10px 15px;
+       padding: 5px 40px 40px 40px;
+       width: 30%;
+       height: 180px;
+       border-radius: 10px;
+       transition: 0.5s;
+       /* box-shadow: 0 20px 60px black; */
+       
+    }
+    .card:hover{
+        box-shadow: 0 3x 6px rgb(231, 231, 231);
+    }
+    label, input{
+        margin-bottom: 10px;
+        padding:  5px;
+    }
+    .amnt{
+        height: 40px;
+        width: 60px;
+    }
+    .currency{
+        color:aliceblue;
+        font-family: "Montserrat Alternates", sans-serif;
+    }
+    
+    
+    .cd1{
+        border: 1px solid blue;
+        box-shadow: 0 10px 30px black;
+        background-color:blue ;
+    }
+    .cd2{
+        border: 1px solid green;
+        box-shadow: 0 10px 30px black;
+        background-color:green ;
+    
+    }
+    .cd3{
+        border: 1px solid red;
+        box-shadow: 0 10px 30px black;
+        background-color:red ;
+        
+    }
+    .cd1:hover{
+        box-shadow: 0 10px 30px blue;
+        transform: scale(1.1);
+        cursor: pointer !important;;
+    }
+    .cd2:hover{
+        box-shadow: 0 10px 30px green;
+        transform: scale(1.1);
+        cursor: pointer !important;;
+    }
+    .cd3:hover{
+        box-shadow: 0 10px 30px red;
+        transform: scale(1.1);
+        cursor: pointer !important;;
+    }
+    .transact{
+        
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        
+        
+     text-align: center;
+    }
+    .sec-3{
+        text-align: center;
+    }
+    #transactionForm{
+        border-bottom: 2px solid rgb(13, 13, 13);
+        border-top: 2px solid rgb(13, 13, 13);
+        padding: 30px 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px black;
+        width: 50%;
+        height: 60vh;
+        text-align: center;
+        background-color: grey;
+        color: black;
+        font-size: 23px;
+        font-weight: 550;
+    }
+    label{
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+    .desc > input{
+        width: 200px;
+    }
+    .amnt{
+        text-align: center;
+    }
+    .date, .desc{
+        margin-top: 5px;
+    }
+    
+    canvas {
+      max-width: 500px;
+      max-height: 400px;
+      padding-left: 40px;
+    }
+    .mycharts{
+      display: flex;
+      flex-direction: row;
+      text-align: center;
+      justify-content: center;
+    }
+    
+</style>
+  </head>
+  <body class="background">
+    
+    
+    <div class="container">
+    <nav>
+      <div class="sidebar-top">
+        <span class="expand-btn">
+          
+          <i class="fa-solid fa-circle-chevron-left" alt="Chevron"></i>
+        </span>
+        
+        <i class="fa-solid fa-dollar-sign"></i>
+      </div>
+        <h3 class="hide hid1">Expense Tracker</h3>
+        <div class="welcome">
+            <p>Welcome, <%= user.username %>! <i class="fa-solid fa-hand"></i></p>
+          
+        </div>
+      
+      <div class="sidebar-links">
+        <ul>
+          
+          <li>
+            <a href="" title="Dashboard">
+              <div class="icon">
 
+                <i class="fa-solid fa-signal"></i>
+              </div>
+              <span class="link hide">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="/addexpense" title="Add Transaction">
+              <div class="icon">
+            
+                  <i class="fa-regular fa-square-plus" title="Add EXpense"></i>
+              </div>
+              <span class="link hide">Add Transcation</span>
+            </a>
+          </li>
+          <li>
+            <a href="/view_expenses" title="Reports Link">
+              <div class="icon">
+                  <i class="fa-solid fa-chart-line" title="View expenses"></i>
+              </div>
+              <span class="link hide">View Expenses</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div  class="logout">
+        <a href="/logout" title="Logout"> <i class="fa-solid fa-power-off" style="padding-left:8px ;"></i>Logout</a>
+      </div>
+    </nav>
+  
+    
 
-    <canvas id="spendingChart"></canvas>
-    <a href="/logout">Logout</a>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const ctx = document.getElementById('spendingChart').getContext('2d');
-    const chart = new Chart(ctx, {
+    <main>
+      <div class="black">
+        <h1 class="montserrat-alternates-black">Expense Tracker</h1>
+      </div>
+
+      <header>
+        <div class="card cd1">
+          
+          <h5 class="bal"> Balance</h5>
+          
+          <span class="currency">Ksh 10,000.00</span>
+        </div>
+        <div class="card cd2">
+          <h5 class="inc">Income</h5>
+          <span class="currency">Ksh 30,000.00</span>
+        </div>
+        <div class="card cd3">
+          <h5 class="exp">Expenses</h5>
+          <span class="currency">Ksh 20,000.00</span>
+        </div>
+      </header>
+
+     <div class="chart">
+      <h2>Your Spending</h2>
+      <div class="mycharts">
+        <canvas id="lineChart" width="200" height="100"></canvas>
+      <canvas id="pieChart" width="200" height="100"></canvas>
+      </div>
+      
+
+     </div>
+    </main>
+  </div>
+   
+  <script>
+    const expensesData = <%- JSON.stringify(chartData) %>;
+    console.log(expensesData);
+
+    // Line chart code here
+    const ctx = document.getElementById('lineChart').getContext('2d');
+
+    // Extracting the dates and amounts from the data
+    const labels = expensesData.map(expense => expense.date);
+    const data = expensesData.map(expense => expense.amount);
+
+    // Line chart configuration
+    const lineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels, // Dates
+            datasets: [{
+                label: 'Expenses Over Time',
+                data: data, // Amounts
+                borderColor: 'rgb(2, 16, 136)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Amount'
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Pie chart code here
+
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+
+    // Group expenses by description and sum the amounts
+    const expenseByDescription = {};
+    expensesData.forEach(expense => {
+        if (!expenseByDescription[expense.description]) {
+            expenseByDescription[expense.description] = 0;
+        }
+        expenseByDescription[expense.description] += expense.amount;
+    });
+
+    const pieLabels = Object.keys(expenseByDescription);
+    const pieData = Object.values(expenseByDescription);
+
+    // Pie chart configuration
+    const pieChart = new Chart(pieCtx, {
         type: 'pie',
         data: {
-            labels: ['Income', 'Expenses'],
+            labels: pieLabels, // Descriptions (categories)
             datasets: [{
-                data: [<%= income %>, <%= expenses %>],
-                backgroundColor: ['green', 'red']
+                label: 'Expenses by Category',
+                data: pieData, // Amounts by category
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
             }]
+        },
+        options: {
+            responsive: true
         }
     });
 </script>
 
-</body>
+  </body>
 </html>
