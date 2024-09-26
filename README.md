@@ -4,7 +4,7 @@
 
 The **Expense Tracker** is a web-based application designed to help users manage and track their daily expenses efficiently. Built using modern technologies such as JavaScript, EJS, Node.js, Express, and MySQL, this application offers a seamless and user-friendly experience for budgeting and expense management.
 
-- c:\Users\fidel\OneDrive\Desktop\PLP\PROJECT\Expense snip.png
+![Expense Tracker Screenshot](c:/Users/fidel/OneDrive/Desktop/PLP/PROJECT/Expense%20snip.png)
 
 - **Pitch Deck**: [Link to the project pitch deck](https://gamma.app/docs/Expense-Tracker-Take-Control-of-Your-Finances-4i177ugbdcjn33o)
 
@@ -34,33 +34,12 @@ The **Expense Tracker** is a web-based application designed to help users manage
 
 ### Prerequisites
 
-- **Node.js** installed on your machine
-- **MySQL** installed and running
-- **Git** for version control (optional)
+- **Node.js** installed on your machine.
+- **MySQL** installed and running.
+- **Git** for version control (optional).
 
 ### Steps to Run Locally
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/swaepapi/Expense-Tracker.git
-
-2. Navigate to the project directory
-
-3. Install dependencies.
-4. Configure the MySQL database
-5. Run database migrations
-6. Start Server
-7. Open your browser and go to http://localhost:8080 to access the application.
-
-### Project Structure
-
- /expense-tracker
-|-- /config          # Configuration files (e.g., database connection)
-|-- /controllers     # Request handling logic
-|-- /models          # Database schemas and models
-|-- /routes          # API and application routes
-|-- /views           # EJS templates for rendering HTML
-|-- /public          # Static files (CSS, JavaScript, images)
-|-- /middleware      # Custom middleware functions
-|-- app.js           # Main application entry point
-|-- package.json     # Project dependencies and scripts
