@@ -63,16 +63,23 @@
       </tr>
   </thead>
   <tbody>
-      <% expenses.forEach(expense => { %>
-      <tr>
-          <td><%= expense.id %></td>
-          <td><%= expense.date.toDateString() %></td> <!-- Format date as a string -->
-          <td><%= expense.amount %></td>
-          <td><%= expense.description %></td>
-      </tr>
-      <% }); %>
+      <% if (expenses.length > 0) { %>
+          <% expenses.forEach(expense => { %>
+          <tr>
+              <td><%= expense.id %></td>
+              <td><%= new Date(expense.date).toDateString() %></td>
+              <td><%= expense.amount %></td>
+              <td><%= expense.description %></td>
+          </tr>
+          <% }); %>
+      <% } else { %>
+          <tr>
+              <td colspan="4">No expenses found for this user, Please Add your Expenses.</td>
+          </tr>
+      <% } %>
   </tbody>
 </table>
+
 
 
 </body>

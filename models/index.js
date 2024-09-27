@@ -43,6 +43,7 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+db.User = require('./user')(sequelize, Sequelize.DataTypes);
 db.Expenses = require('./expenses')(sequelize, Sequelize.DataTypes);
 
 // Add sequelize and Sequelize to the db object for export

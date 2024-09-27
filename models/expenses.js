@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here, if needed
+       // Each expense belongs to a User
+       Expenses.belongsTo(models.User, { foreignKey: 'userId' });
     }
   }
 
@@ -27,6 +28,16 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.FLOAT,
     },
+    userId: {  // Add userId as a foreign key to reference Users
+      allowNull: false,
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Users', // Refer to the Users model
+        key: 'id',      // Match with the 'id' column in Users
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    }
   }, {
     sequelize, // Make sure the sequelize instance is passed here
     modelName: 'Expenses',

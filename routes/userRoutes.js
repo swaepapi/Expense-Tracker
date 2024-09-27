@@ -99,20 +99,18 @@ router.post('/login', async (req, res) => {
 });
 
 
-// Logout route
-router.post('/logout', (req, res) => {
-    req.session.destroy(err => {
+// Route to handle user logout
+router.get('/logout', (req, res) => {
+    // Destroy the session (or do session-related cleanup)
+    req.session.destroy((err) => {
         if (err) {
-            console.error(err);
-            return res.status(500).send('Error logging out.');
+            console.error('Error destroying session during logout:', err);
+            return res.status(500).send('Error logging out');
         }
+        // Redirect the user to the login page after successful logout
         res.redirect('/login');
     });
 });
-
-module.exports = router;
-
-
 
 // Define the route for adding an expense form
 router.get('/addexpense', (req, res) => {
@@ -120,15 +118,19 @@ router.get('/addexpense', (req, res) => {
 });
 
 // Route to handle adding an expense
-router.post('/addexpense', async (req, res) => {
+router.post('/addexpense', isAuthenticated, async (req, res) => {
     try {
         const { date, amount, description } = req.body;
 
-        // Insert the new expense into the database
+        // Fetch the userId from the logged-in user's session
+        const userId = req.session.user.id; 
+
+        // Insert the new expense into the database, including the userId
         await Expenses.create({
             date: date,
             amount: amount,
-            description: description
+            description: description,
+            userId: userId  // Include the userId when creating the expense
         });
 
         // Redirect to the expenses view page after adding the expense
@@ -139,14 +141,35 @@ router.post('/addexpense', async (req, res) => {
     }
 });
 
-// Route to view all expenses
+
+// Route to view all expenses for the logged-in user
 router.get('/view_expenses', async (req, res) => {
     try {
-        // Fetch all expenses from the database
-        const expenses = await Expenses.findAll();
+        // Ensure the user is authenticated
+        if (!req.session.user) {
+            return res.status(401).send('Unauthorized: Please log in to view your expenses');
+        }
 
-        // Render the view and pass the expenses data
-        res.render('view_expenses', { expenses });
+        // Fetch expenses only for the current logged-in user
+        const expenses = await Expenses.findAll({
+            where: { userId: req.session.user.id },  // Filter by the logged-in user's ID
+            order: [['date', 'ASC']]  // Optional: Order by date
+        });
+
+        // Check if there are any expenses for this user
+        if (!expenses || expenses.length === 0) {
+            return res.render('view_expenses', {
+                user: req.session.user,
+                expenses: [],
+                message: 'No expenses found for this user.'
+            });
+        }
+
+        // Render the view and pass the user's expenses
+        res.render('view_expenses', {
+            user: req.session.user,
+            expenses
+        });
     } catch (err) {
         console.error('Error fetching expenses:', err);
         res.status(500).send('Error fetching expenses');
@@ -155,26 +178,53 @@ router.get('/view_expenses', async (req, res) => {
 
 
 
+
 // Route to render the dashboard page (only accessible to authenticated users)
 router.get('/dashboard', isAuthenticated, async (req, res) => {
     try {
-        // Fetch all expenses for the current user from the database
-        const expenses = await Expenses.findAll({ where: { id: req.session.user.id } });
+        // Fetch all expenses for the current user, ordered by date
+        const expenses = await Expenses.findAll({
+            where: { userId: req.session.user.id }, // Use userId to fetch the correct expenses
+            order: [['date', 'ASC']] // Order by date in ascending order
+        });
 
-        // Prepare the chart data from expenses (this assumes you have date, amount, description in the model)
-        const chartData = expenses.map(expense => ({
-            date: expense.date,
-            amount: expense.amount,
-            description: expense.description
-        }));
+        // Check if expenses array is populated
+        if (!expenses || expenses.length === 0) {
+            return res.render('dashboard', {
+                user: req.session.user,
+                totalExpenses: 0,
+                chartData: [], // Empty chart data if no expenses
+                message: 'No expenses found for this user.'
+            });
+        }
 
-        // Render the dashboard, passing both the user and chartData
-        res.render('dashboard', { user: req.session.user, chartData });
+        // Calculate the total expenses for the current user
+        const totalExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
+
+        // Prepare chart data for both the line chart and pie chart
+        const chartData = {
+            lineChartData: expenses.map(expense => ({
+                date: expense.date,
+                amount: expense.amount,
+            })),
+            pieChartData: expenses.map(expense => ({
+                description: expense.description,
+                amount: expense.amount
+            }))
+        };
+
+        // Render the dashboard, passing user details, total expenses, and chart data
+        res.render('dashboard', {
+            user: req.session.user,
+            totalExpenses: totalExpenses || 0, // Handle case where totalExpenses is undefined
+            chartData: chartData // Pass both line and pie chart data
+        });
     } catch (err) {
         console.error('Error fetching expenses:', err);
         res.status(500).send('Error loading dashboard');
     }
 });
+
 
 
   

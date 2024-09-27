@@ -4,7 +4,7 @@
 
 The **Expense Tracker** is a web-based application designed to help users manage and track their daily expenses efficiently. Built using modern technologies such as JavaScript, EJS, Node.js, Express, and MySQL, this application offers a seamless and user-friendly experience for budgeting and expense management.
 
-![Expense Tracker Screenshot](public/ss.png)
+![Expense Tracker Screenshot](public/overview.png)
 
 - **Pitch Deck**: [Link to the project pitch deck](https://gamma.app/docs/Expense-Tracker-Take-Control-of-Your-Finances-4i177ugbdcjn33o)
 

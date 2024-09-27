@@ -6,6 +6,7 @@ const db = require('./config/database'); // Your database connection
 
 const app = express();
 
+
 // To handle JSON data
 app.use(express.json());
 
@@ -29,9 +30,13 @@ app.use(session({
 }));
 
 // Import your routes
-const userRoutes = require('./routes/userRoutes');
+const userRoutes = require ('./routes/userRoutes');
 app.use('/', userRoutes);
 
+
+app.get('/', (req, res) => {
+    res.render('signup');  // Render the signup.ejs file
+});
 // Error handling middleware (optional, but recommended)
 app.use((err, req, res, next) => {
     console.error(err.stack);

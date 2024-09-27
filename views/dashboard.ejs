@@ -265,6 +265,11 @@
       left: 20%;
       
     }
+    .theme{
+      text-align: center;
+      font-style: italic;
+      color: black;
+    }
     .card{
        text-align: center;
        border: 1px solid #5d5b5b;
@@ -371,11 +376,24 @@
       max-height: 400px;
       padding-left: 40px;
     }
+    #pieChart{
+      max-width: 500px;
+      max-height: 300px;
+    }
     .mycharts{
       display: flex;
       flex-direction: row;
       text-align: center;
       justify-content: center;
+    }
+    footer{
+      background-color: #1D1D1D;
+      color: aliceblue;
+      text-align: center;
+      font-size: 12px;
+      margin: 0;
+      bottom: 0;
+      padding:2px;
     }
     
 </style>
@@ -394,6 +412,7 @@
         <i class="fa-solid fa-dollar-sign"></i>
       </div>
         <h3 class="hide hid1">Expense Tracker</h3>
+
         <div class="welcome">
             <p>Welcome, <%= user.username %>! <i class="fa-solid fa-hand"></i></p>
           
@@ -412,12 +431,22 @@
             </a>
           </li>
           <li>
-            <a href="/addexpense" title="Add Transaction">
+            <a href="/addexpense" title="Add expense">
               <div class="icon">
             
                   <i class="fa-regular fa-square-plus" title="Add EXpense"></i>
               </div>
-              <span class="link hide">Add Transcation</span>
+              <span class="link hide">Add Expenses</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/addexpense" title="Add Income">
+              <div class="icon">
+            
+                  <i class="fa-regular fa-square-plus" title="Add EXpense"></i>
+              </div>
+              <span class="link hide">Add Income</span>
             </a>
           </li>
           <li>
@@ -440,6 +469,7 @@
     <main>
       <div class="black">
         <h1 class="montserrat-alternates-black">Expense Tracker</h1>
+        <p class="theme">Track Every Penny, Master Your Finances</p>
       </div>
 
       <header>
@@ -447,123 +477,115 @@
           
           <h5 class="bal"> Balance</h5>
           
-          <span class="currency">Ksh 10,000.00</span>
+          <span class="currency">Ksh - </span>
         </div>
         <div class="card cd2">
           <h5 class="inc">Income</h5>
-          <span class="currency">Ksh 30,000.00</span>
+          <span class="currency">Ksh - </span>
         </div>
         <div class="card cd3">
           <h5 class="exp">Expenses</h5>
-          <span class="currency">Ksh 20,000.00</span>
+          <span class="currency">Ksh <%= totalExpenses %></span>
         </div>
       </header>
 
-     <div class="chart">
-      <h2>Your Spending</h2>
-      <div class="mycharts">
-        <canvas id="lineChart" width="200" height="100"></canvas>
-      <canvas id="pieChart" width="200" height="100"></canvas>
+      <div class="chart">
+        <h2>Your Spending</h2>
+        <div class="mycharts">
+          <canvas id="lineChart"> Spending by date </canvas>
+          <canvas id="pieChart">Spending by Category</canvas>
+        </div>
       </div>
+      </main>
+      </div>
+      <footer>
+        <p class="made-by">Made with ❤️ by Fidel  a.k.a  Swaepapi </p>
+    
+        <p class="rights made-by">&copy; 2024 My Website | Contact:fidelbarasa@gmail.com</p>
+      </footer>
       
-
-     </div>
-    </main>
-  </div>
-   
-  <script>
-    const expensesData = <%- JSON.stringify(chartData) %>;
-    console.log(expensesData);
-
-    // Line chart code here
-    const ctx = document.getElementById('lineChart').getContext('2d');
-
-    // Extracting the dates and amounts from the data
-    const labels = expensesData.map(expense => expense.date);
-    const data = expensesData.map(expense => expense.amount);
-
-    // Line chart configuration
-    const lineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels, // Dates
+      <script>
+        // Extract chart data from the server
+        const expensesData = <%- JSON.stringify(chartData) %>;
+        console.log(expensesData);
+      
+        // Line Chart: Extracting the dates and amounts from lineChartData
+        const lineChartCtx = document.getElementById('lineChart').getContext('2d');
+        const lineLabels = expensesData.lineChartData.map(expense => expense.date);
+        const lineData = expensesData.lineChartData.map(expense => expense.amount);
+      
+        // Line Chart configuration
+        const lineChart = new Chart(lineChartCtx, {
+          type: 'line',
+          data: {
+            labels: lineLabels, // Dates
             datasets: [{
-                label: 'Expenses Over Time',
-                data: data, // Amounts
-                borderColor: 'rgb(2, 16, 136)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: true,
-                tension: 0.1
+              label: 'Expenses Over Time',
+              data: lineData, // Amounts
+              borderColor: 'rgb(2, 16, 136)',
+              backgroundColor: 'rgba(2, 16, 136, 0.2)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.1
             }]
-        },
-        options: {
+          },
+          options: {
             responsive: true,
             scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Date'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Amount'
-                    },
-                    beginAtZero: true
+              x: {
+                title: {
+                  display: true,
+                  text: 'Date'
                 }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Amount'
+                },
+                beginAtZero: true
+              }
             }
-        }
-    });
-
-    // Pie chart code here
-
-    const pieCtx = document.getElementById('pieChart').getContext('2d');
-
-    // Group expenses by description and sum the amounts
-    const expenseByDescription = {};
-    expensesData.forEach(expense => {
-        if (!expenseByDescription[expense.description]) {
-            expenseByDescription[expense.description] = 0;
-        }
-        expenseByDescription[expense.description] += expense.amount;
-    });
-
-    const pieLabels = Object.keys(expenseByDescription);
-    const pieData = Object.values(expenseByDescription);
-
-    // Pie chart configuration
-    const pieChart = new Chart(pieCtx, {
-        type: 'pie',
-        data: {
+          }
+        });
+      
+        // Pie Chart: Extracting descriptions and amounts from pieChartData
+        const pieChartCtx = document.getElementById('pieChart').getContext('2d');
+        const pieLabels = expensesData.pieChartData.map(expense => expense.description);
+        const pieData = expensesData.pieChartData.map(expense => expense.amount);
+      
+        // Pie Chart configuration
+        const pieChart = new Chart(pieChartCtx, {
+          type: 'pie',
+          data: {
             labels: pieLabels, // Descriptions (categories)
             datasets: [{
-                label: 'Expenses by Category',
-                data: pieData, // Amounts by category
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
+              label: 'Expenses by Category',
+              data: pieData, // Amounts by category
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
             }]
-        },
-        options: {
+          },
+          options: {
             responsive: true
-        }
-    });
-</script>
-
+          }
+        });
+      </script>
+      
   </body>
 </html>
